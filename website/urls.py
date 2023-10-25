@@ -3,10 +3,10 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.index, name='home_index'),
-    path('bidule', views.bidule, name='home_bidule'),
-    path('messages',views.all_messages, name="messages"),
-    path('messages/<str>:id',views.show_message, name="show_message")
+    path('', views.all_messages, name="messages"),
+    path('messages/create', views.create_message, name="create_message"),
+    path('messages/update/<str:id>', views.update_message, name="update_message"),
+    path('messages/delete/<str:id>', views.message_delete, name="delete_message"),
+    path('messages/<str:id>', views.show_message, name="show_message"),
 
 ]
-

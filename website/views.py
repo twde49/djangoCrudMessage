@@ -1,25 +1,18 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
-
+from django.forms import ModelForm
 
 from .models import Message
 
 
 # Create your views here.
+class MessageForm(ModelForm):
+    class Meta:
+        model = Message
+        fields = ["title", "content"]
 
 
-def index(request):
-    context = {
-        "message": "coucou"
-    }
-
-    return render(request, 'website/home.html', context)
-
-
-def bidule(request):
-    return render(request, 'website/bidule.html', {
-        "bidule": "un nouveau message"
-    })
+baseUrl = "http://localhost:8000/website/"
 
 
 def all_messages(request):
@@ -36,3 +29,25 @@ def show_message(request, id):
     return render(request, 'website/show.html', {"message": message})
 
 
+def create_message(request):
+    message_form = MessageForm(request.POST or None)
+    if message_form.is_valid():
+        message_form.save()
+        return redirect(baseUrl)
+    return render(request, "website/create.html", {"message_form": message_form})
+
+
+def update_message(request, id):
+    message = get_object_or_404(Message, id=id)
+    message_form = MessageForm(request.POST or None, instance=message)
+    if message_form.is_valid():
+        message_form.save()
+        return redirect(baseUrl)
+    return render(request, "website/create.html", {'message_form': message_form})
+
+
+def message_delete(request, id):
+    message = get_object_or_404(Message, id=id)
+    if message:
+        message.delete()
+    return redirect(baseUrl)
